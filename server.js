@@ -15,15 +15,6 @@ app.use(cors())
 
 const { posts, users: friends } = data
 
-const authenticator = (req, res, next) => {
-  const { authorization } = req.headers
-  if (authorization === token) {
-    next()
-  } else {
-    res.status(403).json({ error: "User be logged in to do that." })
-  }
-}
-
 app.post("/api/login", (req, res) => {
   const { username, password } = req.body
   if (username === "Lambda School" && password === "i<3Lambd4") {
@@ -38,18 +29,21 @@ app.post("/api/login", (req, res) => {
   }
 })
 
+// users
 app.get("/api/friends", (_req, res) => {
   setTimeout(() => {
     res.send(friends)
   }, 1000)
 })
 
+// posts
 app.get("/api/posts", (_req, res) => {
   setTimeout(() => {
     res.send(posts)
   }, 1000)
 })
 
+// usersById
 app.get("/api/friends/:id", (req, res) => {
   const friend = friends.find(f => f.id == req.params.id)
 
@@ -60,12 +54,30 @@ app.get("/api/friends/:id", (req, res) => {
   }
 })
 
+// postsForUser
 app.get("/api/friends/:id/posts", (req, res) => {
-  if (posts[req.params.id]) {
-    res.status(200).json(posts[req.params.id])
+  const ps = posts.filter(post => post.user === req.params.id)
+  if (ps.length > 0) {
+    res.status(200).json(ps)
   } else {
     res.status(404).send({ msg: "Friend not found" })
   }
+})
+
+// postById
+app.get("/api/posts/:id", (req, res) => {
+  const ix = posts.findIndex(p => p.id === req.params.id)
+  ix >= 0
+    ? res.status(200).json(posts[ix])
+    : res.status(400).send({ msg: "Post not found" })
+})
+
+// authorForPost
+app.get("/api/posts/:id/friend", (req, res) => {
+  const authorForPost = friends.find(f => f.postIds.includes(req.params.id))
+  authorForPost
+    ? res.status(200).json(authorForPost)
+    : res.status(400).send({ msg: "Author not found" })
 })
 
 app.post("/api/friends", (req, res) => {

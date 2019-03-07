@@ -58,22 +58,26 @@ const genSeedJSON = () => {
   // Grab a bag of ids
   const $ids = users.map(({ id }) => id)
   // Add a random timestamp to each post, and assign a subselection to a user (friend)
-  const $posts = JSON.parse(posts)
-    .map(post => ({
-      post,
-      user: randomInArray($ids),
-      timestamp: genTimestamp(5)
-    }))
-    .reduce(
-      (postsByUser, { post, user, timestamp }) => ({
-        ...postsByUser,
-        [user]: [...(postsByUser[user] || []), { post, timestamp }]
-      }),
-      {}
-    )
+  const $posts = JSON.parse(posts).map(post => ({
+    post,
+    user: randomInArray($ids),
+    timestamp: String(genTimestamp(5)),
+    id: uuidv4()
+  }))
+  // .reduce(
+  //   (postsByUser, { post, user, id, timestamp }) => ({
+  //     ...postsByUser,
+  //     [user]: [...(postsByUser[user] || []), { id, post, timestamp }]
+  //   }),
+  //   {}
+  // )
+
   return {
     posts: $posts,
-    users
+    users: users.map(u => ({
+      ...u,
+      postIds: $posts.filter(({ user }) => user === u.id).map(({ id }) => id)
+    }))
   }
 }
 
