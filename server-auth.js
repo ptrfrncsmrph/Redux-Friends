@@ -38,19 +38,19 @@ app.post("/api/login", (req, res) => {
   }
 })
 
-app.get("/api/friends", (_req, res) => {
+app.get("/api/friends", authenticator, (_req, res) => {
   setTimeout(() => {
     res.send(friends)
   }, 1000)
 })
 
-app.get("/api/posts", (_req, res) => {
+app.get("/api/posts", authenticator, (_req, res) => {
   setTimeout(() => {
     res.send(posts)
   }, 1000)
 })
 
-app.get("/api/friends/:id", (req, res) => {
+app.get("/api/friends/:id", authenticator, (req, res) => {
   const friend = friends.find(f => f.id == req.params.id)
 
   if (friend) {
@@ -60,7 +60,7 @@ app.get("/api/friends/:id", (req, res) => {
   }
 })
 
-app.get("/api/friends/:id/posts", (req, res) => {
+app.get("/api/friends/:id/posts", authenticator, (req, res) => {
   if (posts[req.params.id]) {
     res.status(200).json(posts[req.params.id])
   } else {
@@ -68,7 +68,7 @@ app.get("/api/friends/:id/posts", (req, res) => {
   }
 })
 
-app.post("/api/friends", (req, res) => {
+app.post("/api/friends", authenticator, (req, res) => {
   const friend = { id: uuidv4(), ...req.body }
 
   friends = [...friends, friend]
@@ -76,7 +76,7 @@ app.post("/api/friends", (req, res) => {
   res.send(friends)
 })
 
-app.put("/api/friends/:id", (req, res) => {
+app.put("/api/friends/:id", authenticator, (req, res) => {
   const { id } = req.params
 
   const friendIndex = friends.findIndex(f => f.id == id)
@@ -95,7 +95,7 @@ app.put("/api/friends/:id", (req, res) => {
   }
 })
 
-app.delete("/api/friends/:id", (req, res) => {
+app.delete("/api/friends/:id", authenticator, (req, res) => {
   const { id } = req.params
 
   friends = friends.filter(f => f.id !== id)
