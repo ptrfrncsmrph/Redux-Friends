@@ -2,18 +2,34 @@ const express = require("express")
 const bodyParser = require("body-parser")
 const cors = require("cors")
 const uuidv4 = require("uuid/v4")
+const jwt = require("jsonwebtoken")
 const data = require("./data")
 
 const port = 5000
 const app = express()
-const token =
-  "eyJ1c2VySWQiOiJiMDhmODZhZi0zNWRhLTQ4ZjItOGZhYi1jZWYzOTA0NjYwYmQifQ"
 
 app.use(bodyParser.json())
 
 app.use(cors())
 
+app.use((req, res, next) => {
+  const { authorization } = req.headers
+  const { url } = req
+  jwt.verify(authorization, "shhhhh", (err, decodedToken) => {
+    if (url === "/api/login/") {
+      next()
+    } else if (err || !decodedToken) {
+      res.status(401).send("not authorized")
+      return
+    }
+    next()
+  })
+})
+
 const { posts, users: friends } = data
+
+/// Making a token
+const token = jwt.sign({ foo: "bar" }, "shhhhh")
 
 app.post("/api/login", (req, res) => {
   const { username, password } = req.body
@@ -80,6 +96,8 @@ app.get("/api/posts/:id/friend", (req, res) => {
     : res.status(400).send({ msg: "Author not found" })
 })
 
+// POST
+
 app.post("/api/friends", (req, res) => {
   const friend = { id: uuidv4(), ...req.body }
 
@@ -87,6 +105,8 @@ app.post("/api/friends", (req, res) => {
 
   res.send(friends)
 })
+
+// PUT
 
 app.put("/api/friends/:id", (req, res) => {
   const { id } = req.params
@@ -106,6 +126,8 @@ app.put("/api/friends/:id", (req, res) => {
     res.status(404).send({ msg: "Friend not found" })
   }
 })
+
+// DELETE
 
 app.delete("/api/friends/:id", (req, res) => {
   const { id } = req.params

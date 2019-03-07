@@ -27,4 +27,4 @@ const server = new GraphQLServer({
   resolvers
 })
 
-server.start(() => console.log(`Server is running ???`))
+server.start(() => console.log(`GraphQL server is running on port 4000`)
