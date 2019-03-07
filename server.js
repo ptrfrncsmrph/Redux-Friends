@@ -5,6 +5,7 @@ const uuidv4 = require("uuid/v4")
 const jwt = require("jsonwebtoken")
 const data = require("./data")
 
+const SECRET = "SECRET"
 const port = 5000
 const app = express()
 
@@ -15,10 +16,11 @@ app.use(cors())
 app.use((req, res, next) => {
   const { authorization } = req.headers
   const { url } = req
-  jwt.verify(authorization, "shhhhh", (err, decodedToken) => {
+  jwt.verify(authorization, SECRET, (err, decodedToken) => {
     if (url === "/api/login/") {
       next()
     } else if (err || !decodedToken) {
+      console.log({ decodedToken })
       res.status(401).send("not authorized")
       return
     }
@@ -29,7 +31,7 @@ app.use((req, res, next) => {
 const { posts, users: friends } = data
 
 /// Making a token
-const token = jwt.sign({ foo: "bar" }, "shhhhh")
+const token = jwt.sign({ foo: "bar" }, SECRET)
 
 app.post("/api/login", (req, res) => {
   const { username, password } = req.body

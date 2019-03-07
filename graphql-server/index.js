@@ -3,6 +3,7 @@ const axios = require("axios")
 
 const baseURL = `http://10.0.0.53:5000/api`
 
+const PORT = 4000
 const prop = key => obj => obj[key]
 const getData = prop("data")
 
@@ -27,4 +28,6 @@ const server = new GraphQLServer({
   resolvers
 })
 
-server.start(() => console.log(`GraphQL server is running on port 4000`)
+server.start({ port: PORT }, ({ port }) =>
+  console.log(`GraphQL server is running on port ${port}`)
+)
