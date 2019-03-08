@@ -7,7 +7,7 @@ const emptyForm = {
   password: ""
 }
 
-const LoginForm = ({ onLoginSubmit }) => {
+const LoginForm = ({ onLoginSubmit, history }) => {
   const [{ username, password }, setState] = useState(emptyForm)
   const handleChange = ({ target: { name, value } }) => {
     setState(state => ({ ...state, [name]: value }))
@@ -15,6 +15,7 @@ const LoginForm = ({ onLoginSubmit }) => {
   const handleSubmit = e => {
     e.preventDefault()
     onLoginSubmit({ username, password })
+    history.push("/friends")
   }
   return (
     <>

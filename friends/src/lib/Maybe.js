@@ -33,10 +33,11 @@ class Nothing_ {
 export const Nothing = Nothing_.of()
 
 export const maybe = (x, fn) => ({ constructor, value }) => {
+  console.log(constructor)
   switch (constructor) {
     case Just:
       return fn(value)
-    case Nothing:
+    case Nothing_:
       return x
     default:
       throw new Error(`${constructor} is not a valid Maybe type`)

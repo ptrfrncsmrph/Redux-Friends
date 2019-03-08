@@ -1,5 +1,30 @@
-import { Route } from "react-router-dom"
+import React from "react"
+import { Route, Redirect } from "react-router-dom"
+import { connect } from "react-redux"
+import { maybe, either, id } from "../lib"
 
-const ProtectedRoute = ({ component: Component, user, ...props }) => (
-  <Route {...props} render={props => null} />
+const onError = err => (
+  <>
+    <h1>Error</h1>
+    <pre>{JSON.stringify(err, null, 2)}</pre>
+  </>
 )
+
+const ProtectedRoute = ({ component: Component, user, data, ...props }) => {
+  console.log("PROTECTED ROUTE")
+  return (
+    <Route
+      {...props}
+      render={props =>
+        maybe(
+          <Redirect to="/login" />,
+          either(onError, validUser => (
+            <Component {...props} user={validUser} />
+          ))
+        )(user)
+      }
+    />
+  )
+}
+
+export default connect(id)(ProtectedRoute)

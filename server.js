@@ -35,7 +35,7 @@ const token = jwt.sign({ foo: "bar" }, SECRET)
 
 app.post("/api/login", (req, res) => {
   const { username, password } = req.body
-  if (username === "Lambda School" && password === "i<3Lambd4") {
+  if (username === "admin" && password === "admin") {
     req.loggedIn = true
     res.status(200).json({
       payload: token
