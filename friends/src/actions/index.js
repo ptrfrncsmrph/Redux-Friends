@@ -1,5 +1,6 @@
 import Axios from "axios"
 
+export const LOGGING_IN = "LOGGING_IN"
 export const LOGIN_SUCCESS = "LOGIN_SUCCESS"
 export const LOGIN_FAILURE = "LOGIN_FAILURE"
 export const LOGOUT = "LOGOUT"
@@ -20,9 +21,40 @@ const loginFail = err => ({
   payload: err
 })
 
-export const onLoginSubmit = credentials => dispatch => {
-  console.log("Calling axios.post with credentials:", credentials)
+export const fetchFriends = token => dispatch =>
+  Axios.get(`${baseURL}/friends/`, {
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `${token}`
+    }
+  })
+    .then(({ data }) =>
+      dispatch({
+        type: DATA_FETCHED_SUCCESS,
+        payload: data
+      })
+    )
+    .catch(err => dispatch({ type: DATA_FETCHED_FAILURE, payload: err }))
+
+export const onLoginSubmit = credentials => dispatch =>
   Axios.post(`${baseURL}/login/`, credentials)
-    .then(({ data: { payload } }) => dispatch(login(payload)))
+    .then(({ data: { payload } }) => {
+      dispatch(login(payload))
+      fetchFriends(payload)(dispatch)
+    })
     .catch(err => dispatch(loginFail(err)))
-}
+
+export const onDelete = token => dispatch => id =>
+  Axios.delete(`${baseURL}/friends/${id}`, {
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `${token}`
+    }
+  })
+    .then(({ data }) =>
+      dispatch({
+        type: DATA_FETCHED_SUCCESS,
+        payload: data
+      })
+    )
+    .catch(console.error)

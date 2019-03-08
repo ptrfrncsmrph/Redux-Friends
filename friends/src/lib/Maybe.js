@@ -33,7 +33,6 @@ class Nothing_ {
 export const Nothing = Nothing_.of()
 
 export const maybe = (x, fn) => ({ constructor, value }) => {
-  console.log(constructor)
   switch (constructor) {
     case Just:
       return fn(value)

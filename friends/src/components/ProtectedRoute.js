@@ -11,7 +11,6 @@ const onError = err => (
 )
 
 const ProtectedRoute = ({ component: Component, user, data, ...props }) => {
-  console.log("PROTECTED ROUTE")
   return (
     <Route
       {...props}

@@ -28,7 +28,7 @@ app.use((req, res, next) => {
   })
 })
 
-const { posts, users: friends } = data
+let { posts, users: friends } = data
 
 /// Making a token
 const token = jwt.sign({ foo: "bar" }, SECRET)
@@ -133,7 +133,7 @@ app.put("/api/friends/:id", (req, res) => {
 
 app.delete("/api/friends/:id", (req, res) => {
   const { id } = req.params
-
+  console.log("DELETE!", id)
   friends = friends.filter(f => f.id !== id)
 
   res.send(friends)
